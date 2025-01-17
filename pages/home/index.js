@@ -164,10 +164,11 @@ const llenarHistorial= async(tipo)=>{
     });
 
     let cuerpo ="";
-    historial.map(obj=>{
+    historial?.map(obj=>{
         if(obj.type===tipo)
             cuerpo+=`<a href="#" onclick='chatear(${JSON.stringify(obj)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${obj.fecha_on.substring(0,19)}</a>`;
     });
+
 
     document.getElementById("listaHistorial").innerHTML = cuerpo;
 
