@@ -91,7 +91,7 @@ const registro=async()=>{
     const data = await response.json();
     
     if(data.status === "success"){
-        window.location.href = "pages/home/";
+        window.location.href = "../home/";
     }else{
         location.reload(true);
     }
