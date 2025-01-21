@@ -34,8 +34,12 @@ function addMessage(message, isUser = true) {
 
 }
 
-const saveMeesage=(message, type)=>{
+const saveMeesage=async(message, type)=>{
     
+    if(!state?.chat?.id){
+        await nuevoChat(state.tipo);
+    }
+
     fetch(state.url+"/messages",{
         method: "POST", // Cambia el método a POST
         headers: {
@@ -74,8 +78,12 @@ const handleSendMessage=async()=> {
     }
 }
 
-const iaSendMessage=(message)=>{
+const iaSendMessage=async(message)=>{
     let hook = "";
+    while(!state.chat){
+        console.log("esperando..");
+        await new Promise(r => setTimeout(r, 1000));
+    }
     switch(state.tipo){
         case "Vía Jubilación":
             hook = state.hook_via_jubilacion;
@@ -88,7 +96,7 @@ const iaSendMessage=(message)=>{
     }
         
     return new Promise((resolve, reject) => {
-        fetch("https://uplabs-ai.app.n8n.cloud/webhook/"+hook+"?message="+message)  
+        fetch("https://uplabs-ai.app.n8n.cloud/webhook/"+hook+"?message="+message+"&sessionId="+state.chat.id)  
         .then((response) => response.json())
         .then((data) => {
             resolve(data);
@@ -120,11 +128,17 @@ const init=async()=>{
     state.user = localStorage.getItem("user");
     if(!state.user) window.location.href="/";
     state.user = JSON.parse(state.user)
+    
+    verHistorial("Vía Jubilación", document.getElementById("btnViaJubilacion"));
+
 };
 
 const verHistorial=(tipo, button)=>{
     state.button=button;
     state.tipo = tipo;
+
+    document.getElementById("asistName").innerText=tipo;
+
     let cuerpo ='<a href="#" class="nav-item" style="font-size: 16px;" onclick="closeHistory();"><span>⏪</span>'+tipo+'</a>';
     cuerpo+=`<a href="#" class="nav-item" style="font-size: 16px;" onclick="nuevoChat('${tipo}');"><span>❇️</span>Nuevo chat</a>`;
     cuerpo+="<div style='margin-top:30px;' id='listaHistorial'>";
@@ -158,7 +172,12 @@ const nuevoChat=async(tipo)=>{
             reject(error);
         });
     });
-    state.button.click();
+    state.chat = chat;
+    let cuerpo=`<a href="#" onclick='chatear(${JSON.stringify(chat)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${chat.fecha_on.substring(0,19).replace('T', ' ')}</a>`;
+    let listaHistorial = document.getElementById("listaHistorial");
+    listaHistorial.innerHTML = cuerpo + listaHistorial.innerHTML;
+    
+
 };
 
 const llenarHistorial= async(tipo)=>{
@@ -181,13 +200,15 @@ const llenarHistorial= async(tipo)=>{
     });
 
     let cuerpo ="";
-    historial?.map(obj=>{
+    historial?.sort( (a,b)=> a<b?0:1 ).map(obj=>{
         if(obj.type===tipo)
-            cuerpo+=`<a href="#" onclick='chatear(${JSON.stringify(obj)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${obj.fecha_on.substring(0,19)}</a>`;
+            cuerpo+=`<a href="#" onclick='chatear(${JSON.stringify(obj)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${obj.fecha_on.substring(0,19).replace('T',' ')}</a>`;
     });
 
 
     document.getElementById("listaHistorial").innerHTML = cuerpo;
+
+
 
 };
 
