@@ -85,7 +85,7 @@ const iaSendMessage=async(message)=>{
         await new Promise(r => setTimeout(r, 1000));
     }
     switch(state.tipo){
-        case "Vía Jubilación":
+        case "Vida Jubilación":
             hook = state.hook_via_jubilacion;
             break;
         case "Todo Riesgo de Daños":
@@ -129,7 +129,7 @@ const init=async()=>{
     if(!state.user) window.location.href="/";
     state.user = JSON.parse(state.user)
     
-    verHistorial("Vía Jubilación", document.getElementById("btnViaJubilacion"));
+    verHistorial("Vida Jubilación", document.getElementById("btnViaJubilacion"));
 
 };
 
