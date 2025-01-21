@@ -75,8 +75,20 @@ const handleSendMessage=async()=> {
 }
 
 const iaSendMessage=(message)=>{
+    let hook = "";
+    switch(state.tipo){
+        case "Vía Jubilación":
+            hook = state.hook_via_jubilacion;
+            break;
+        case "Todo Riesgo de Daños":
+            hook = state.hook_trdp;
+            break;
+        default:
+            hook = "9e123ff7-9a58-4d90-9eae-fd3e76cb0c8a";  
+    }
+        
     return new Promise((resolve, reject) => {
-        fetch("https://uplabs-ai.app.n8n.cloud/webhook/9e123ff7-9a58-4d90-9eae-fd3e76cb0c8a?message="+message)  
+        fetch("https://uplabs-ai.app.n8n.cloud/webhook/"+hook+"?message="+message)  
         .then((response) => response.json())
         .then((data) => {
             resolve(data);
@@ -100,7 +112,11 @@ const cerrarSession=()=>{
 };
 
 const init=async()=>{
-    state.url = await fetch("../../config.json").then(response => response.json()).then(data => data.urlreplit);
+    var config = await fetch("../../config.json").then(response => response.json()).then(data => data);
+    state.url = config.urlreplit;
+    state.hook_via_jubilacion = config.hook_via_jubilacion;
+    state.hook_trdp = config.hook_trdp;
+
     state.user = localStorage.getItem("user");
     if(!state.user) window.location.href="/";
     state.user = JSON.parse(state.user)
@@ -108,6 +124,7 @@ const init=async()=>{
 
 const verHistorial=(tipo, button)=>{
     state.button=button;
+    state.tipo = tipo;
     let cuerpo ='<a href="#" class="nav-item" style="font-size: 16px;" onclick="closeHistory();"><span>⏪</span>'+tipo+'</a>';
     cuerpo+=`<a href="#" class="nav-item" style="font-size: 16px;" onclick="nuevoChat('${tipo}');"><span>❇️</span>Nuevo chat</a>`;
     cuerpo+="<div style='margin-top:30px;' id='listaHistorial'>";
