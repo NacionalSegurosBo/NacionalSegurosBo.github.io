@@ -4,7 +4,7 @@ const chatContainer = document.getElementById('chatContainer');
 const menuToggle = document.getElementById('menuToggle');
 const sidebar = document.getElementById('sidebar');
 var state={};
-
+var escribiendo = `<div class="typing-indicator" id="typingIndicator"><img src="../../images/typing.gif" alt="Escribiendo..." /></div>`;
 // Manejar el menú responsive
 menuToggle.addEventListener('click', () => {
     sidebar.classList.toggle('active');
@@ -39,6 +39,7 @@ const saveMeesage=async(message, type)=>{
     if(!state?.chat?.id){
         await nuevoChat(state.tipo);
     }
+    
 
     fetch(state.url+"/messages",{
         method: "POST", // Cambia el método a POST
@@ -80,6 +81,13 @@ const handleSendMessage=async()=> {
 
 const iaSendMessage=async(message)=>{
     let hook = "";
+
+    if(!document.getElementById("typingIndicator")){
+        let chatContainer = document.getElementById("chatContainer");
+        chatContainer.innerHTML = chatContainer.innerHTML+escribiendo;
+    }
+
+    
     while(!state.chat){
         console.log("esperando..");
         await new Promise(r => setTimeout(r, 1000));
@@ -94,11 +102,13 @@ const iaSendMessage=async(message)=>{
         default:
             hook = "9e123ff7-9a58-4d90-9eae-fd3e76cb0c8a";  
     }
+    
         
     return new Promise((resolve, reject) => {
         fetch("https://uplabs-ai.app.n8n.cloud/webhook/"+hook+"?message="+message+"&sessionId="+state.chat.id)  
         .then((response) => response.json())
         .then((data) => {
+            document.getElementById("typingIndicator").remove();
             resolve(data);
         }).catch((error) => {
             reject(error);

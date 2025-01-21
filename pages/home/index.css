@@ -217,3 +217,15 @@ body {
         width: 100px;
     }
 }
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.typing-indicator img {
+    width: 50px;
+    height: auto;
+}
