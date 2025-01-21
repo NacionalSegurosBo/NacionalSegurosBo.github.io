@@ -183,7 +183,7 @@ const nuevoChat=async(tipo)=>{
         });
     });
     state.chat = chat;
-    let cuerpo=`<a href="#" onclick='chatear(${JSON.stringify(chat)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${chat.fecha_on.substring(0,19).replace('T', ' ')}</a>`;
+    let cuerpo=`<a href="#" onclick='chatear(${JSON.stringify(chat)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${parseFecha(chat.fecha_on)}</a>`;
     let listaHistorial = document.getElementById("listaHistorial");
     listaHistorial.innerHTML = cuerpo + listaHistorial.innerHTML;
     
@@ -212,7 +212,7 @@ const llenarHistorial= async(tipo)=>{
     let cuerpo ="";
     historial?.sort( (a,b)=> a<b?0:1 ).map(obj=>{
         if(obj.type===tipo)
-            cuerpo+=`<a href="#" onclick='chatear(${JSON.stringify(obj)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${obj.fecha_on.substring(0,19).replace('T',' ')}</a>`;
+            cuerpo+=`<a href="#" onclick='chatear(${JSON.stringify(obj)})' class="nav-item" style="font-size: 13px;"><i>📅</i>${parseFecha(obj.fecha_on)}</a>`;
     });
 
 
@@ -262,6 +262,24 @@ const chatear=async(obj)=>{
 
 const closeHistory=()=>{
     document.getElementById("sidebarHistory").style.display="none";
+};
+
+const parseFecha=(fechaISO)=>{
+    const fecha = new Date(fechaISO);
+    const opciones = {
+        timeZone: "America/La_Paz",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    };
+    
+    // Formatear la fecha a un formato legible
+    return new Intl.DateTimeFormat("es-BO", opciones).format(fecha);
+    
 };
 
 init();
