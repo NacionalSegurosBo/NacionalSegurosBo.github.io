@@ -19,10 +19,27 @@
                 Todo Riesgo de Daños
             </a>
         </nav>
-        <button class="admin-button" onclick="cerrarSession();">
+        <button class="admin-button" id="profileButton">
             <i>⚙️</i>
-            Salir
+            Perfil
         </button>
+        <div id="profileMenu" class="profile-menu">
+            <button onclick="" class="profile-menu-item">
+                <div style="text-align: left;">
+                    <div id="profile-username" style="font-weight: bold;">Nombre de Usuario</div>
+                    <div id="profile-email" style="color: slategray;">email</div>
+                </div>
+                
+            </button>
+            <button onclick="ajustes();" class="profile-menu-item">
+                <i>🚪</i>
+                Ajustes
+            </button>
+            <button onclick="cerrarSession();" style="border-top: 1px solid #000; color: tomato;" class="profile-menu-item">
+                <i>🚪</i>
+                Cerrar Sesión
+            </button>
+        </div>
     </div>
     <div class="sidebar-history" id="sidebarHistory" style="border: 1px solid black; display: none; ">
         <nav id="menu-historico">
