@@ -121,8 +121,13 @@ messageInput.addEventListener("keypress", (e) => {
 })
 
 
-const cerrarSession = async () => {
+const cerrarSession = async (ele) => {
   
+  profileMenu.classList.remove("active")
+  let text = document.getElementById("profileButton").innerText;
+  document.getElementById("profileButton").innerHTML = `<img alt="" src="../../images/load.gif" style="width: 25px;"/>`;
+
+
   if(!state.url) {
     state.url = await fetch("../config.json").then(response => response.json()).then(data => data.urlreplit);
   }
@@ -134,7 +139,7 @@ const cerrarSession = async () => {
       state.user = null;
   }
 
-  profileMenu.classList.remove("active")
+  
   localStorage.removeItem("user")
   window.location.href = "/"
 }
@@ -150,6 +155,22 @@ const init = async () => {
   state.user = localStorage.getItem("user")
   if (!state.user) window.location.href = "/"
   state.user = JSON.parse(state.user)
+
+  if(window.innerWidth > 500) {
+    Array.from(document.getElementsByClassName("noventa")).forEach((obj) => {
+      obj.classList.remove("noventa");
+      obj.classList.add("cien");
+  });
+
+    sidebar.classList.toggle("active")
+  }else{
+    
+    Array.from(document.getElementsByClassName("cien")).forEach((obj) => {
+        obj.classList.remove("cien");
+        obj.classList.add("noventa");
+    });
+    sidebar.classList.remove("active")
+  }
 
 
   document.getElementById("profile-username").innerText = state.user.name;
@@ -189,6 +210,12 @@ const verHistorial = (tipo, button) => {
 
   document.getElementById("menu-historico").innerHTML = cuerpo
   document.getElementById("sidebarHistory").style.display = ""
+
+  if(window.innerWidth > 500) {
+    sidebar.classList.toggle("active")
+  }else{
+    sidebar.classList.remove("active")
+  }
 
   llenarHistorial(tipo)
 }
@@ -319,5 +346,11 @@ const parseFecha = (fechaISO) => {
 const ajustes=()=>{
   window.location.href = "../ajustes/";
 };
+
+document.getElementById('messageInput').addEventListener('focus', () => {
+  setTimeout(() => {
+      document.getElementById('messageInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 300);
+});
 
 init()

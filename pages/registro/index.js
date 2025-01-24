@@ -60,6 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 const registro=async()=>{
+
+    if(document.getElementById("crear_cuenta").children.length>0){
+        return;
+    }
+
+    let text = document.getElementById("crear_cuenta").innerText;
+    document.getElementById("crear_cuenta").innerHTML = `<img alt="" src="../../images/load.gif" style="width: 25px;"/>`;
     let form = document.getElementById("registrationForm");
     if (!form.checkValidity()) {
         form.reportValidity();
@@ -93,7 +100,26 @@ const registro=async()=>{
     if(data.status === "success"){
         window.location.href = "../home/";
     }else{
-        location.reload(true);
+        const regex = /Key \((.*?)\)=\((.*?)\)/;
+        const match = data.detail.match(regex);
+
+        if (match) {
+            const jsonOutput = {
+                error: "Ya existe un usuario mismo ",
+                constraint: data.detail.match(/unique constraint "(.*?)"/)[1],
+                detalle: {
+                    campo: match[1],
+                    valor: match[2]
+                }
+            };
+
+            console.log(JSON.stringify(jsonOutput, null, 2));
+            document.getElementById("error").innerText = jsonOutput.error+" "+jsonOutput.detalle.campo;
+
+        }
     }
+
+    document.getElementById("crear_cuenta").innerText = text;
+
 
 };

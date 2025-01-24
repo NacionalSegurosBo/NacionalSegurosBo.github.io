@@ -178,20 +178,11 @@ const paintPerfil=(edit)=>{
         </div>
 
         <div class="form-group">
-          <label for="type">Nivel de permisos</label>
-          <select id="type" name="type" ${edit ? "" : "disabled"}>
-            <option value="user" ${state.user.type === "user" ? "selected" : ""}>Usuario</option>
-            <option value="admin" ${state.user.type === "admin" ? "selected" : ""}>Administrador</option>
-          </select>
+          <label for="phone">Contraseña</label>
+          <input type="password" id="pass" name="pass" value="${state.user.password}" ${edit ? "" : "disabled"}>
         </div>
-
-        <div class="form-group">
-          <label for="status">Estado</label>
-          <select id="status" name="status" ${edit ? "" : "disabled"}>
-            <option value="1" ${state.user.state == 1 ? "selected" : ""}>Activo</option>
-            <option value="0" ${state.user.state == 0 ? "selected" : ""}>Inactivo</option>
-          </select>
-        </div>
+        
+        
         
         <div class="button-container">
         ${
@@ -211,8 +202,7 @@ const guardarPerfil=()=>{
     let name = document.getElementById("name").value;
     let email = document.getElementById("email").value;
     let phone = document.getElementById("phone").value;
-    let type = document.getElementById("type").value;
-    let status = document.getElementById("status").value;
+    let password = document.getElementById("pass").value;
 
     fetch(state.url+"/users/"+state.user.id,{
         method: "PUT", // Cambia el método a POST
@@ -225,8 +215,7 @@ const guardarPerfil=()=>{
             name:name,
             email:email,
             phone:phone,
-            type:type,
-            state:status
+            password:password,
         })
     })  
     .then((response) => response.json())
@@ -241,7 +230,7 @@ const guardarPerfil=()=>{
 };
 
 const paintDashboard=async()=>{
-    let data = await new Promise((resolve, reject) => {
+    state.dashboard = await new Promise((resolve, reject) => {
         fetch(state.url+"/users",{
             headers: {
                 "Content-Type": "application/json", // Si necesitas especificar el tipo de contenido
@@ -271,7 +260,7 @@ const paintDashboard=async()=>{
                         </tr>
                     </thead>
                     <tbody>`;
-    data.map(usr=>{
+    state.dashboard.map(usr=>{
         cuerpo+=`
             <tr>
                 <td data-label="Nombre">${usr.name}</td>
@@ -280,7 +269,7 @@ const paintDashboard=async()=>{
                 <td data-label="Admin">${usr.type}</td>
                 <td>
                 <div class="toggle-switch">
-                    <input type="checkbox" id="ios-toggle_${usr.id}" class="toggle-checkbox" ${usr.state == 1 ? "checked" : ""}>
+                    <input type="checkbox" id="ios-toggle_${usr.id}" data-user='${JSON.stringify(usr)}' class="toggle-checkbox" ${usr.state == 1 ? "checked" : ""}>
                     <label for="ios-toggle_${usr.id}" class="toggle-label"></label>
                 </div>
                 </td>
@@ -308,7 +297,26 @@ const initToggle=()=>{
 
     for (let i = 0; i < elementos.length; i++) {
         elementos[i].addEventListener('click', function() {
-            console.log('Elemento clickeado:', elementos[i]);
+            let us = JSON.parse(document.getElementById(elementos[i].id).dataset.user);
+            console.log(us);
+
+            this.checked ? us.state = 1 : us.state = 0;
+
+
+            fetch(state.url+"/users/"+us.id,{
+                method: "PUT", // Cambia el método a POST
+                headers: {
+                    "Content-Type": "application/json", // Indica que el contenido es JSON
+                    "Authorization": `Bearer ${state.user.access_token}` // Incluye el token de autorización
+                },
+                body: JSON.stringify(us)
+            })  
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            }).catch((error) => {
+                console.log(error);
+            });
         });
     }
 

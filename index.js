@@ -15,6 +15,16 @@ const conect = async (usr, pass) => {
 };
 
 const loguin= async()=>{
+
+
+    if(document.getElementById("loguin_").children.length>0){
+        return;
+    }
+
+    let text = document.getElementById("loguin_").innerText;
+    document.getElementById("loguin_").innerHTML = `<img alt="" src="../../images/load.gif" style="width: 25px;"/>`;
+
+
     document.getElementById("errorMsg").innerText=""
     let form = document.getElementById("loginForm");
     if (!form.checkValidity()) {
@@ -31,9 +41,11 @@ const loguin= async()=>{
         document.getElementById("password").value = "";
     
         document.getElementById("errorMsg").innerText="Error en las credenciales, intente nuevamente."
+        document.getElementById("loguin_").innerText = text; 
+
         return;
     }
-    localStorage.setItem("user", JSON.stringify(state.user));        
+    localStorage.setItem("user", JSON.stringify(state.user));       
     window.location.href = "pages/home/";
 };
 
