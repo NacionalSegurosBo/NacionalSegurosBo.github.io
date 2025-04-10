@@ -26,7 +26,10 @@ messageInput.addEventListener("input", function () {
 function addMessage(message, isUser = true) {
   const messageElement = document.createElement("pre")
   messageElement.className = `message ${isUser ? "user" : "assistant"}`
-  messageElement.textContent = message
+
+  const html = message.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+  messageElement.innerHTML = html
   chatContainer.appendChild(messageElement)
   chatContainer.scrollTop = chatContainer.scrollHeight
 }
@@ -100,7 +103,7 @@ const iaSendMessage = async (message) => {
   }
 
   return new Promise((resolve, reject) => {
-    fetch("https://uplabs-ai.app.n8n.cloud/webhook/" + hook + "?message=" + message + "&sessionId=" + state.chat.id)
+    fetch("https://uplabs-ai.app.n8n.cloud/webhook-test/" + hook + "?message=" + message + "&sessionId=" + state.chat.id)
       .then((response) => response.json())
       .then((data) => {
         document.getElementById("typingIndicator").remove()
