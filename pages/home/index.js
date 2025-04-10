@@ -103,7 +103,7 @@ const iaSendMessage = async (message) => {
   }
 
   return new Promise((resolve, reject) => {
-    fetch("https://uplabs-ai.app.n8n.cloud/webhook-test/" + hook + "?message=" + message + "&sessionId=" + state.chat.id)
+    fetch("https://uplabs-ai.app.n8n.cloud/webhook/" + hook + "?message=" + message + "&sessionId=" + state.chat.id)
       .then((response) => response.json())
       .then((data) => {
         document.getElementById("typingIndicator").remove()
